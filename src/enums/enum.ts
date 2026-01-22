@@ -11,3 +11,9 @@ export const LEVEL_ENUM = pgEnum("level", [
   "500",
   "600",
 ]);
+export const parseStatusEnum = pgEnum("parse_status", [
+  "pending",
+  "processing",
+  "completed",
+  "failed",
+]);

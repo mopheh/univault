@@ -1,67 +1,8 @@
+CREATE TYPE "public"."gender" AS ENUM('MALE', 'FEMALE');--> statement-breakpoint
+CREATE TYPE "public"."level" AS ENUM('100', '200', '300', '400', '500', '600');--> statement-breakpoint
+CREATE TYPE "public"."role" AS ENUM('STUDENT', 'ADMIN', 'FACULTY REP');--> statement-breakpoint
+CREATE TYPE "public"."semester" AS ENUM('FIRST', 'SECOND');--> statement-breakpoint
 CREATE TYPE "public"."parse_status" AS ENUM('pending', 'processing', 'completed', 'failed');--> statement-breakpoint
-CREATE TABLE "book_courses" (
-	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
-	"book_id" uuid NOT NULL,
-	"course_id" uuid NOT NULL
-);
---> statement-breakpoint
-CREATE TABLE "book_pages" (
-	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
-	"book_id" uuid NOT NULL,
-	"page_number" integer NOT NULL,
-	"text_chunk" varchar,
-	"created_at" timestamp DEFAULT now() NOT NULL,
-	CONSTRAINT "book_pages_id_unique" UNIQUE("id"),
-	CONSTRAINT "book_pages_book_id_page_number_unique" UNIQUE("book_id","page_number")
-);
---> statement-breakpoint
-CREATE TABLE "books" (
-	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
-	"title" varchar(255) NOT NULL,
-	"description" varchar(255) NOT NULL,
-	"type" varchar(255) DEFAULT 'Material' NOT NULL,
-	"department_id" uuid NOT NULL,
-	"parse_status" "parse_status" DEFAULT 'pending',
-	"file_url" varchar(1000),
-	"page_count" integer,
-	"user_id" uuid NOT NULL,
-	"created_at" timestamp with time zone DEFAULT now()
-);
---> statement-breakpoint
-CREATE TABLE "courses" (
-	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
-	"course_code" varchar(255) NOT NULL,
-	"unit_load" integer NOT NULL,
-	"level" "level" NOT NULL,
-	"semester" "semester" DEFAULT 'FIRST',
-	"title" varchar NOT NULL,
-	"department_id" uuid NOT NULL,
-	CONSTRAINT "courses_id_unique" UNIQUE("id"),
-	CONSTRAINT "courses_course_code_unique" UNIQUE("course_code")
-);
---> statement-breakpoint
-CREATE TABLE "department_courses" (
-	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
-	"department_id" uuid NOT NULL,
-	"course_id" uuid NOT NULL
-);
---> statement-breakpoint
-CREATE TABLE "department" (
-	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
-	"name" varchar(255) NOT NULL,
-	"faculty_id" uuid NOT NULL,
-	CONSTRAINT "department_id_unique" UNIQUE("id"),
-	CONSTRAINT "department_name_unique" UNIQUE("name")
-);
---> statement-breakpoint
-CREATE TABLE "faculty" (
-	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
-	"name" varchar(255) NOT NULL,
-	"created_at" timestamp with time zone DEFAULT now(),
-	CONSTRAINT "faculty_id_unique" UNIQUE("id"),
-	CONSTRAINT "faculty_name_unique" UNIQUE("name")
-);
---> statement-breakpoint
 CREATE TABLE "activities" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"user_id" uuid NOT NULL,
@@ -156,15 +97,69 @@ CREATE TABLE "users" (
 	CONSTRAINT "users_matric_no_unique" UNIQUE("matric_no")
 );
 --> statement-breakpoint
-ALTER TABLE "book_courses" ADD CONSTRAINT "book_courses_book_id_books_id_fk" FOREIGN KEY ("book_id") REFERENCES "public"."books"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "book_courses" ADD CONSTRAINT "book_courses_course_id_courses_id_fk" FOREIGN KEY ("course_id") REFERENCES "public"."courses"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "book_pages" ADD CONSTRAINT "book_pages_book_id_books_id_fk" FOREIGN KEY ("book_id") REFERENCES "public"."books"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "books" ADD CONSTRAINT "books_department_id_department_id_fk" FOREIGN KEY ("department_id") REFERENCES "public"."department"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "books" ADD CONSTRAINT "books_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "courses" ADD CONSTRAINT "courses_department_id_department_id_fk" FOREIGN KEY ("department_id") REFERENCES "public"."department"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "department_courses" ADD CONSTRAINT "department_courses_department_id_department_id_fk" FOREIGN KEY ("department_id") REFERENCES "public"."department"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "department_courses" ADD CONSTRAINT "department_courses_course_id_courses_id_fk" FOREIGN KEY ("course_id") REFERENCES "public"."courses"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "department" ADD CONSTRAINT "department_faculty_id_faculty_id_fk" FOREIGN KEY ("faculty_id") REFERENCES "public"."faculty"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+CREATE TABLE "department_courses" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"department_id" uuid NOT NULL,
+	"course_id" uuid NOT NULL
+);
+--> statement-breakpoint
+CREATE TABLE "department" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"name" varchar(255) NOT NULL,
+	"faculty_id" uuid NOT NULL,
+	CONSTRAINT "department_id_unique" UNIQUE("id"),
+	CONSTRAINT "department_name_unique" UNIQUE("name")
+);
+--> statement-breakpoint
+CREATE TABLE "faculty" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"name" varchar(255) NOT NULL,
+	"created_at" timestamp with time zone DEFAULT now(),
+	CONSTRAINT "faculty_id_unique" UNIQUE("id"),
+	CONSTRAINT "faculty_name_unique" UNIQUE("name")
+);
+--> statement-breakpoint
+CREATE TABLE "courses" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"course_code" varchar(255) NOT NULL,
+	"unit_load" integer NOT NULL,
+	"level" "level" NOT NULL,
+	"semester" "semester" DEFAULT 'FIRST',
+	"title" varchar NOT NULL,
+	"department_id" uuid NOT NULL,
+	CONSTRAINT "courses_id_unique" UNIQUE("id"),
+	CONSTRAINT "courses_course_code_unique" UNIQUE("course_code")
+);
+--> statement-breakpoint
+CREATE TABLE "book_courses" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"book_id" uuid NOT NULL,
+	"course_id" uuid NOT NULL
+);
+--> statement-breakpoint
+CREATE TABLE "book_pages" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"book_id" uuid NOT NULL,
+	"page_number" integer NOT NULL,
+	"text_chunk" varchar,
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	CONSTRAINT "book_pages_id_unique" UNIQUE("id"),
+	CONSTRAINT "book_pages_book_id_page_number_unique" UNIQUE("book_id","page_number")
+);
+--> statement-breakpoint
+CREATE TABLE "books" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"title" varchar(255) NOT NULL,
+	"description" varchar(255) NOT NULL,
+	"type" varchar(255) DEFAULT 'Material' NOT NULL,
+	"department_id" uuid NOT NULL,
+	"parse_status" "parse_status" DEFAULT 'pending',
+	"file_url" varchar(1000),
+	"page_count" integer,
+	"user_id" uuid NOT NULL,
+	"created_at" timestamp with time zone DEFAULT now()
+);
+--> statement-breakpoint
 ALTER TABLE "activities" ADD CONSTRAINT "activities_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "answers" ADD CONSTRAINT "answers_session_id_sessions_id_fk" FOREIGN KEY ("session_id") REFERENCES "public"."sessions"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "answers" ADD CONSTRAINT "answers_question_id_questions_id_fk" FOREIGN KEY ("question_id") REFERENCES "public"."questions"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
@@ -178,4 +173,13 @@ ALTER TABLE "sessions" ADD CONSTRAINT "sessions_course_id_courses_id_fk" FOREIGN
 ALTER TABLE "user_books" ADD CONSTRAINT "user_books_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "user_books" ADD CONSTRAINT "user_books_book_id_books_id_fk" FOREIGN KEY ("book_id") REFERENCES "public"."books"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "users" ADD CONSTRAINT "users_faculty_id_faculty_id_fk" FOREIGN KEY ("faculty_id") REFERENCES "public"."faculty"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "users" ADD CONSTRAINT "users_department_id_department_id_fk" FOREIGN KEY ("department_id") REFERENCES "public"."department"("id") ON DELETE cascade ON UPDATE no action;
+ALTER TABLE "users" ADD CONSTRAINT "users_department_id_department_id_fk" FOREIGN KEY ("department_id") REFERENCES "public"."department"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "department_courses" ADD CONSTRAINT "department_courses_department_id_department_id_fk" FOREIGN KEY ("department_id") REFERENCES "public"."department"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "department_courses" ADD CONSTRAINT "department_courses_course_id_courses_id_fk" FOREIGN KEY ("course_id") REFERENCES "public"."courses"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "department" ADD CONSTRAINT "department_faculty_id_faculty_id_fk" FOREIGN KEY ("faculty_id") REFERENCES "public"."faculty"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "courses" ADD CONSTRAINT "courses_department_id_department_id_fk" FOREIGN KEY ("department_id") REFERENCES "public"."department"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "book_courses" ADD CONSTRAINT "book_courses_book_id_books_id_fk" FOREIGN KEY ("book_id") REFERENCES "public"."books"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "book_courses" ADD CONSTRAINT "book_courses_course_id_courses_id_fk" FOREIGN KEY ("course_id") REFERENCES "public"."courses"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "book_pages" ADD CONSTRAINT "book_pages_book_id_books_id_fk" FOREIGN KEY ("book_id") REFERENCES "public"."books"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "books" ADD CONSTRAINT "books_department_id_department_id_fk" FOREIGN KEY ("department_id") REFERENCES "public"."department"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "books" ADD CONSTRAINT "books_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;

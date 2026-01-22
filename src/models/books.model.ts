@@ -6,9 +6,10 @@ import {
   uuid,
   varchar,
 } from "drizzle-orm/pg-core";
-import { parseStatusEnum, users } from "./user.model.ts";
 import { departments } from "./department.model.ts";
 import { courses } from "./course.model.ts";
+import { parseStatusEnum } from "../enums/enum.ts";
+import { users } from "./user.model.ts";
 
 export const books = pgTable("books", {
   id: uuid("id").primaryKey().defaultRandom(),

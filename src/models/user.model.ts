@@ -16,12 +16,7 @@ import { departments, faculty } from "./department.model.ts";
 
 import { courses } from "./course.model.ts";
 import { LEVEL_ENUM, ROLE_ENUM, GENDER_ENUM } from "../enums/enum.ts";
-export const parseStatusEnum = pgEnum("parse_status", [
-  "pending",
-  "processing",
-  "completed",
-  "failed",
-]);
+
 export const users = pgTable("users", {
   id: uuid("id").primaryKey().notNull().unique().defaultRandom(),
   clerkId: varchar("clerk_id", { length: 255 }).notNull().unique(),
